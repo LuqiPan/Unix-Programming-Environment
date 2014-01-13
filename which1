@@ -1,0 +1,15 @@
+# mywhich 
+# A shell script to imitate the behavior of which
+
+case $# in
+0)      echo 'Usage: which command' 1>&2; exit 2
+esac
+for i in `echo $PATH | sed 's/:/ /g'`
+do
+    if test -f $i/$1
+    then
+        echo $i/$1
+        exit 0
+    fi
+done
+exit 1
