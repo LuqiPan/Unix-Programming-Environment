@@ -1,10 +1,14 @@
 # zap pattern: kill all processes matching pattern
-# BUG in this version
+# final version
 
-PATH=/bin:/usr/bin
+# PATH=/bin:/usr/bin
+IFS='
+'           #change IFS to just newline
 
 case $# in
-0)  echo 'Usage: zap pattern' 1>&2; exit 1
+"")     echo 'Usage: zap [-2] pattern' 1>&2; exit 1 ;;
+-*)     SIG=$1; shift
 esac
 
-kill `pick \`ps -a | grep "$*"\` | awk '{print $1}'`
+echo '  PID               TIME CMD'
+kill $SIG `pick \`ps -a | egrep "$*"\` | awk '{print $1}'`
