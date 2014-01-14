@@ -1,21 +1,26 @@
 # overwrite: copy standard input to output after EOF
-# version 2. BUG here
+# final version
 
+opath=$PATH
 PATH=/bin:/urs/bin
 
 case $# in
-1)      ;;
-*)      echo 'Usage: overwrite file' 1>&2; exit 2
+0|1)    echo 'Usage: overwrite file file cmd [args]' 1>&2; exit 2
 esac
 
+file=$1
+shift
 new=/tmp/overwr1.$$
 old=/tmp/overwr2.$$
-trap 'rm -f $new $old; exit1' 1 2 15
+trap 'rm -f $new $old; exit1' 1 2 15    # clean up files
 
-cat >$new       # collect the input
-cp $1 $old      # save original file
-
-trap '' 1 2 15  # we are committed; ignore signals
-cp $new $1      # overwrite the input file
-
+if PATH=$opath "$@" >$new               # collect input
+then
+    cp $file $old   # save original file
+    trap '' 1 2 15  # we are committed; ignore signals
+    cp $new $file   # overwrite the input file
+else
+    echo "overwrite: $1 failed, $file unchanged" 1>&2
+    exit 1
+fi
 rm -f $new $old
