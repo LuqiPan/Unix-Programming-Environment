@@ -1,5 +1,5 @@
 # overwrite: copy standard input to output after EOF
-# version 1. BUG here
+# version 2. BUG here
 
 PATH=/bin:/urs/bin
 
@@ -8,9 +8,14 @@ case $# in
 *)      echo 'Usage: overwrite file' 1>&2; exit 2
 esac
 
-new=/tmp/overwr.$$
-trap 'rm -f $new; exit1' 1 2 15
+new=/tmp/overwr1.$$
+old=/tmp/overwr2.$$
+trap 'rm -f $new $old; exit1' 1 2 15
 
 cat >$new       # collect the input
+cp $1 $old      # save original file
+
+trap '' 1 2 15  # we are committed; ignore signals
 cp $new $1      # overwrite the input file
-rm -f $new
+
+rm -f $new $old
