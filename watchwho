@@ -5,6 +5,8 @@ new=/tmp/watchwho1.$$
 old=/tmp/watchwho2.$$
 >$old       # create an empty file
 
+trap 'rm -f $new $old; exit1' 1 2 15
+
 while :     # loop forever
 do
     who >$new
